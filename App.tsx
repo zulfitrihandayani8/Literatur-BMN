@@ -71,26 +71,38 @@ const App: React.FC = () => {
       {/* --- ANIMATED BACKGROUND LAYERS --- */}
       
       {/* 1. Base Color Layer */}
-      <div className="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-[-5] transition-colors duration-300"></div>
+      <div className="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-0 transition-colors duration-300"></div>
       
-      {/* 2. Animated Blobs (Stronger Visibility) */}
-      <div className="fixed inset-0 z-[-4] overflow-hidden pointer-events-none">
+      {/* 2. Animated Blobs (Optimized for No Flickering) */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         {/* Blob 1: Top Left - Blue */}
-        <div className="absolute -top-[10%] -left-[10%] w-[40rem] h-[40rem] bg-blue-400/40 dark:bg-blue-600/30 rounded-full blur-[80px] mix-blend-multiply dark:mix-blend-screen animate-blob"></div>
+        <div 
+          className="absolute -top-[10%] -left-[10%] w-[40rem] h-[40rem] bg-blue-300/30 dark:bg-blue-600/20 rounded-full blur-[80px] animate-blob transform-gpu"
+          style={{ willChange: 'transform' }}
+        ></div>
         
         {/* Blob 2: Top Right - Sky/Cyan - Delayed */}
-        <div className="absolute top-[5%] -right-[10%] w-[35rem] h-[35rem] bg-sky-300/40 dark:bg-sky-500/30 rounded-full blur-[80px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000"></div>
+        <div 
+          className="absolute top-[5%] -right-[10%] w-[35rem] h-[35rem] bg-sky-300/30 dark:bg-sky-500/20 rounded-full blur-[80px] animate-blob animation-delay-2000 transform-gpu"
+          style={{ willChange: 'transform' }}
+        ></div>
         
         {/* Blob 3: Bottom Left - Indigo - Delayed */}
-        <div className="absolute bottom-[10%] -left-[5%] w-[45rem] h-[45rem] bg-indigo-300/40 dark:bg-indigo-500/30 rounded-full blur-[80px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-4000"></div>
+        <div 
+          className="absolute bottom-[10%] -left-[5%] w-[45rem] h-[45rem] bg-indigo-300/30 dark:bg-indigo-500/20 rounded-full blur-[80px] animate-blob animation-delay-4000 transform-gpu"
+          style={{ willChange: 'transform' }}
+        ></div>
 
         {/* Blob 4: Bottom Right - Cyan - Delayed */}
-        <div className="absolute -bottom-[10%] -right-[5%] w-[30rem] h-[30rem] bg-cyan-300/40 dark:bg-cyan-500/30 rounded-full blur-[80px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000"></div>
+        <div 
+          className="absolute -bottom-[10%] -right-[5%] w-[30rem] h-[30rem] bg-cyan-300/30 dark:bg-cyan-500/20 rounded-full blur-[80px] animate-blob animation-delay-2000 transform-gpu"
+          style={{ willChange: 'transform' }}
+        ></div>
       </div>
 
       {/* 3. Grid Pattern Overlay */}
       <div 
-        className="fixed inset-0 z-[-3] opacity-[0.4] dark:opacity-[0.1] pointer-events-none"
+        className="fixed inset-0 z-0 opacity-[0.4] dark:opacity-[0.1] pointer-events-none"
         style={{
           backgroundImage: isDark 
             ? 'radial-gradient(#94a3b8 1px, transparent 1px)' 
