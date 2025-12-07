@@ -81,11 +81,13 @@ const App: React.FC = () => {
         />
         
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row gap-8 xl:gap-12">
+          <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
             
-            <div className="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
-               <Sidebar onNavigate={handleScrollTo} />
-            </div>
+            {/* Sidebar sekarang menjadi direct flex child agar sticky berfungsi */}
+            <Sidebar 
+              className="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0" 
+              onNavigate={handleScrollTo} 
+            />
 
             <main className="flex-1 min-w-0 space-y-12">
               {!searchQuery && (

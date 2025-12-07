@@ -25,9 +25,11 @@ export interface ScopeData {
 }
 
 export interface Comment {
-  id: string;
+  id: string; // ID internal (timestamp string)
+  docId?: string; // ID dokumen dari Firestore (khusus top-level)
   name: string;
   content: string;
   date: string;
-  replies?: Comment[]; // Menambahkan dukungan untuk balasan komentar
+  timestamp?: any; // Firestore timestamp
+  replies?: Comment[];
 }
