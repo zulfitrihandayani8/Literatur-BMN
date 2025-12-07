@@ -28,6 +28,7 @@ export interface Comment {
   id: string; // ID internal (timestamp string)
   docId?: string; // ID dokumen dari Firestore (khusus top-level)
   name: string;
+  unitKerja?: string; // Field baru untuk Unit Kerja
   content: string;
   date: string;
   timestamp?: any; // Firestore timestamp

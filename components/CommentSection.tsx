@@ -19,12 +19,14 @@ const CommentSection: React.FC = () => {
   
   // State form utama
   const [name, setName] = useState('');
+  const [unitKerja, setUnitKerja] = useState('');
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State form balasan
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyName, setReplyName] = useState('');
+  const [replyUnitKerja, setReplyUnitKerja] = useState('');
   const [replyContent, setReplyContent] = useState('');
   const [isReplySubmitting, setIsReplySubmitting] = useState(false);
 
@@ -59,6 +61,7 @@ const CommentSection: React.FC = () => {
       await addDoc(collection(db, "comments"), {
         id: Date.now().toString(),
         name: name.trim(),
+        unitKerja: unitKerja.trim(),
         content: content.trim(),
         date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
         timestamp: serverTimestamp(),
@@ -66,6 +69,7 @@ const CommentSection: React.FC = () => {
       });
       
       setName('');
+      setUnitKerja('');
       setContent('');
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -76,7 +80,6 @@ const CommentSection: React.FC = () => {
   };
 
   // Helper: Mencari Top-Level Document ID yang membawahi sebuah reply
-  // Karena struktur nested, kita perlu tahu dokumen mana yang harus di-update
   const findParentDocId = (commentsList: Comment[], targetId: string): string | null => {
     for (const comment of commentsList) {
       // Cek apakah target adalah top-level comment itu sendiri
@@ -116,6 +119,7 @@ const CommentSection: React.FC = () => {
     const newReply: Comment = {
       id: Date.now().toString(),
       name: replyName.trim(),
+      unitKerja: replyUnitKerja.trim(),
       content: replyContent.trim(),
       date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
       replies: []
@@ -164,6 +168,7 @@ const CommentSection: React.FC = () => {
         // Reset Form
         setReplyingTo(null);
         setReplyName('');
+        setReplyUnitKerja('');
         setReplyContent('');
       }
     } catch (error) {
@@ -188,10 +193,15 @@ const CommentSection: React.FC = () => {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start mb-1">
-              <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{comment.name}</h4>
-              <span className="text-xs text-slate-500 dark:text-slate-400">{comment.date}</span>
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{comment.name}</h4>
+                {comment.unitKerja && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{comment.unitKerja}</p>
+                )}
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0 ml-2">{comment.date}</span>
             </div>
-            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed break-words">{comment.content}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed break-words mt-1">{comment.content}</p>
             
             {/* Tombol Balas */}
             <div className="mt-2 flex items-center gap-3">
@@ -199,6 +209,7 @@ const CommentSection: React.FC = () => {
                   onClick={() => {
                     setReplyingTo(isReplying ? null : comment.id);
                     setReplyName('');
+                    setReplyUnitKerja('');
                     setReplyContent('');
                   }}
                   className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 flex items-center gap-1 transition-colors"
@@ -215,17 +226,29 @@ const CommentSection: React.FC = () => {
         {/* Form Balasan */}
         {isReplying && (
            <form onSubmit={(e) => handleReplySubmit(e, comment.id)} className="mt-3 ml-14 p-4 bg-white dark:bg-slate-900 rounded-xl border border-primary-200 dark:border-slate-700 shadow-md animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="mb-3">
-                 <input
-                    type="text"
-                    value={replyName}
-                    onChange={(e) => setReplyName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="Nama Anda"
-                    required
-                    autoFocus
-                    disabled={isReplySubmitting}
-                 />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div className="col-span-1">
+                  <input
+                      type="text"
+                      value={replyName}
+                      onChange={(e) => setReplyName(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                      placeholder="Nama Anda"
+                      required
+                      autoFocus
+                      disabled={isReplySubmitting}
+                  />
+                </div>
+                <div className="col-span-1">
+                  <input
+                      type="text"
+                      value={replyUnitKerja}
+                      onChange={(e) => setReplyUnitKerja(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                      placeholder="Unit Kerja (Opsional)"
+                      disabled={isReplySubmitting}
+                  />
+                </div>
               </div>
               <div className="mb-3">
                  <textarea
@@ -298,6 +321,18 @@ const CommentSection: React.FC = () => {
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-sm placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
             placeholder="Tulis nama Anda"
             required
+            disabled={isSubmitting}
+          />
+        </div>
+        <div>
+          <label htmlFor="unitKerja" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Unit Kerja</label>
+          <input
+            type="text"
+            id="unitKerja"
+            value={unitKerja}
+            onChange={(e) => setUnitKerja(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-sm placeholder-slate-400 dark:placeholder-slate-500 shadow-sm"
+            placeholder="Contoh: Biro Keuangan (Opsional)"
             disabled={isSubmitting}
           />
         </div>
